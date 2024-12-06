@@ -25,25 +25,29 @@ def parse_grid(raw_grid: Iterable[str]) -> tuple[list[list[bool]], tuple[int, in
 
 
 def part_1(grid: list[list[bool]], guard: tuple[int, int]) -> int:
+    guard_y, guard_x = guard
     move_y = [-1, 0, 1, 0]
     move_x = [0, 1, 0, -1]
     move_i = 0
     positions = {guard}
 
     while True:
-        next_guard = guard[0] + move_y[move_i], guard[1] + move_x[move_i]
+        next_guard_y = guard_y + move_y[move_i]
+        next_guard_x = guard_x + move_x[move_i]
 
-        if 0 <= next_guard[0] < len(grid) and 0 <= next_guard[1] < len(grid[0]):
-            if grid[next_guard[0]][next_guard[1]]:
+        if 0 <= next_guard_y < len(grid) and 0 <= next_guard_x < len(grid[0]):
+            if grid[next_guard_y][next_guard_x]:
                 move_i = (move_i + 1) % 4
             else:
-                guard = next_guard
-                positions.add(guard)
+                guard_y = next_guard_y
+                guard_x = next_guard_x
+                positions.add((guard_y, guard_x))
         else:
             return len(positions)
 
 
 def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
+    guard_y, guard_x = guard
     move_y = [-1, 0, 1, 0]
     move_x = [0, 1, 0, -1]
     move_i = 0
@@ -52,43 +56,45 @@ def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
     obstructions = 0
 
     while True:
-        next_guard = guard[0] + move_y[move_i], guard[1] + move_x[move_i]
+        next_guard_y = guard_y + move_y[move_i]
+        next_guard_x = guard_x + move_x[move_i]
 
-        if 0 <= next_guard[0] < len(grid) and 0 <= next_guard[1] < len(grid[0]):
-            if grid[next_guard[0]][next_guard[1]]:
+        if 0 <= next_guard_y < len(grid) and 0 <= next_guard_x < len(grid[0]):
+            if grid[next_guard_y][next_guard_x]:
                 move_i = (move_i + 1) % 4
-                turns.add((guard[0], guard[1], move_y[move_i], move_x[move_i]))
+                turns.add((guard_y, guard_x, move_y[move_i], move_x[move_i]))
             else:
-                if next_guard not in path:
+                if (next_guard_y, next_guard_x) not in path:
                     # BEGIN OBSTRUCTION
-                    grid[next_guard[0]][next_guard[1]] = True
+                    grid[next_guard_y][next_guard_x] = True
 
                     move_i_ = move_i
                     turns_ = turns.copy()
 
                     while True:
-                        next_guard_ = guard[0] + move_y[move_i_], guard[1] + move_x[move_i_]
+                        next_guard_y_ = guard_y + move_y[move_i_]
+                        next_guard_x_ = guard_x + move_x[move_i_]
 
-                        if 0 <= next_guard_[0] < len(grid) and 0 <= next_guard_[1] < len(grid[0]):
-                            if grid[next_guard_[0]][next_guard_[1]]:
+                        if 0 <= next_guard_y_ < len(grid) and 0 <= next_guard_x_ < len(grid[0]):
+                            if grid[next_guard_y_][next_guard_x_]:
                                 move_i_ = (move_i_ + 1) % 4
 
-                                turn = guard[0], guard[1], move_y[move_i_], move_x[move_i_]
-
-                                if turn in turns_:
+                                if (turn := (guard_y, guard_x, move_y[move_i_], move_x[move_i_])) in turns_:
                                     obstructions += 1
                                     break
                                 turns_.add(turn)
                             else:
-                                guard = next_guard_
+                                guard_y = next_guard_y_
+                                guard_x = next_guard_x_
                         else:
                             break
 
-                    grid[next_guard[0]][next_guard[1]] = False
+                    grid[next_guard_y][next_guard_x] = False
                     # END OBSTRUCTION
 
-                guard = next_guard
-                path.add(guard)
+                guard_y = next_guard_y
+                guard_x = next_guard_x
+                path.add((guard_y, guard_x))
         else:
             return obstructions
 
