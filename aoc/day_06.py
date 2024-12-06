@@ -1,12 +1,16 @@
 import fileinput
 from collections.abc import Iterable
+from time import monotonic
 
 
 def main():
     grid, guard = parse_grid(map(str.rstrip, fileinput.input()))
 
     print(part_1(grid, guard))
+    t_1 = monotonic()
     print(part_2(grid, guard))
+    t_2 = monotonic()
+    print(round((t_2 - t_1) * 1_000, 2))
 
 
 def parse_grid(raw_grid: Iterable[str]) -> tuple[list[list[bool]], tuple[int, int]]:
@@ -62,7 +66,7 @@ def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
         if 0 <= next_guard_y < len(grid) and 0 <= next_guard_x < len(grid[0]):
             if grid[next_guard_y][next_guard_x]:
                 move_i = (move_i + 1) % 4
-                turns.add((guard_y, guard_x, move_y[move_i], move_x[move_i]))
+                turns.add((guard_y, guard_x, move_i))
             else:
                 if (next_guard_y, next_guard_x) not in path:
                     # BEGIN OBSTRUCTION
@@ -79,7 +83,7 @@ def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
                             if grid[next_guard_y_][next_guard_x_]:
                                 move_i_ = (move_i_ + 1) % 4
 
-                                if (turn := (guard_y, guard_x, move_y[move_i_], move_x[move_i_])) in turns_:
+                                if (turn := (guard_y, guard_x, move_i_)) in turns_:
                                     obstructions += 1
                                     break
                                 turns_.add(turn)
