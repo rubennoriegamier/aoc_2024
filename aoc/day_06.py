@@ -47,8 +47,8 @@ def part_1(grid: list[list[bool]], guard: tuple[int, int]) -> int:
 def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
     move_y = deque([-1, 0, 1, 0])
     move_x = deque([0, -1, 0, 1])
-    positions = {guard}
-    positions_with_moves = {(guard[0], guard[1], move_y[0], move_x[0])}
+    path = {guard}
+    turns = set()
     obstructions = 0
 
     while True:
@@ -58,14 +58,15 @@ def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
             if grid[next_guard[0]][next_guard[1]]:
                 move_y.rotate()
                 move_x.rotate()
+                turns.add((guard[0], guard[1], move_y[0], move_x[0]))
             else:
-                if next_guard not in positions:
+                if next_guard not in path:
                     # BEGIN OBSTRUCTION
                     grid[next_guard[0]][next_guard[1]] = True
 
                     move_y_ = move_y.copy()
                     move_x_ = move_x.copy()
-                    positions_with_moves_ = set()
+                    turns_ = turns.copy()
 
                     while True:
                         next_guard_ = guard[0] + move_y_[0], guard[1] + move_x_[0]
@@ -74,15 +75,15 @@ def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
                             if grid[next_guard_[0]][next_guard_[1]]:
                                 move_y_.rotate()
                                 move_x_.rotate()
-                            else:
-                                guard = next_guard_
-                                next_position_with_move = guard[0], guard[1], move_y_[0], move_x_[0]
 
-                                if next_position_with_move in positions_with_moves \
-                                        or next_position_with_move in positions_with_moves_:
+                                turn = guard[0], guard[1], move_y_[0], move_x_[0]
+
+                                if turn in turns_:
                                     obstructions += 1
                                     break
-                                positions_with_moves_.add(next_position_with_move)
+                                turns_.add(turn)
+                            else:
+                                guard = next_guard_
                         else:
                             break
 
@@ -90,8 +91,7 @@ def part_2(grid: list[list[bool]], guard: tuple[int, int]) -> int:
                     # END OBSTRUCTION
 
                 guard = next_guard
-                positions.add(guard)
-                positions_with_moves.add((guard[0], guard[1], move_y[0], move_x[0]))
+                path.add(guard)
         else:
             return obstructions
 
