@@ -1,16 +1,12 @@
 import fileinput
 from collections.abc import Iterable
-from time import monotonic
 
 
 def main():
     grid, guard = parse_grid(map(str.rstrip, fileinput.input()))
 
     print(part_1(grid, guard))
-    t_1 = monotonic()
     print(part_2(grid, guard))
-    t_2 = monotonic()
-    print(round((t_2 - t_1) * 1_000, 2))
 
 
 def parse_grid(raw_grid: Iterable[str]) -> tuple[list[list[bool]], tuple[int, int]]:
