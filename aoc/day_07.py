@@ -32,34 +32,34 @@ class Equation:
         return cls(int(raw_result), list(map(int, raw_operands.split())))
 
     def part_1(self) -> bool:
-        operands = deque([self._operands[0]])
+        operands = deque([self._result])
 
-        for operand_a in self._operands[1:]:
+        for operand_a in self._operands[::-1]:
             for _ in range(len(operands)):
                 operand_b = operands.popleft()
 
-                if (operand_c := operand_a + operand_b) <= self._result:
+                if (operand_c := operand_b - operand_a) >= 0:
                     operands.append(operand_c)
-                if (operand_c := operand_a * operand_b) <= self._result:
-                    operands.append(operand_c)
+                if (quotient_and_remainder := divmod(operand_b, operand_a))[1] == 0:
+                    operands.append(quotient_and_remainder[0])
 
-        return any(map(partial(eq, self._result), operands))
+        return any(map(partial(eq, 0), operands))
 
     def part_2(self) -> bool:
-        operands = deque([self._operands[0]])
+        operands = deque([self._result])
 
-        for operand_a in self._operands[1:]:
+        for operand_a in self._operands[::-1]:
             for _ in range(len(operands)):
                 operand_b = operands.popleft()
 
-                if (operand_c := operand_a + operand_b) <= self._result:
+                if (operand_c := operand_b - operand_a) >= 0:
                     operands.append(operand_c)
-                if (operand_c := operand_a * operand_b) <= self._result:
-                    operands.append(operand_c)
-                    if (operand_c := int(f'{operand_b}{operand_a}')) <= self._result:
-                        operands.append(operand_c)
+                if (quotient_and_remainder := divmod(operand_b, operand_a))[1] == 0:
+                    operands.append(quotient_and_remainder[0])
+                if 0 < len(operand_c := (operand_b := str(operand_b)).removesuffix(str(operand_a))) < len(operand_b):
+                    operands.append(int(operand_c))
 
-        return any(map(partial(eq, self._result), operands))
+        return any(map(partial(eq, 0), operands))
 
 
 def part_1(equations: Iterable[Equation]) -> int:
