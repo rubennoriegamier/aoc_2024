@@ -40,14 +40,14 @@ def part_2(disk_map: list[int]) -> int:
             memory.extend(repeat(i // 2, size))
 
     for (file_start, file_size), id_ in reversed(files):
+        while free and file_start < free[-1][0]:
+            del free[-1]
         for i, (free_start, free_size) in enumerate(free):
-            if file_start < free_start:
-                break
             if file_size <= free_size:
-                memory[free_start:free_start + file_size] = repeat(id_, file_size)
+                memory[free_start:free_start + file_size] = memory[file_start:file_start + file_size]
                 memory[file_start:file_start + file_size] = repeat(None, file_size)
                 if file_size == free_size:
-                    free = free[:i] + free[i + 1:]
+                    del free[i]
                 else:
                     free[i] = free_start + file_size, free_size - file_size
                 break
