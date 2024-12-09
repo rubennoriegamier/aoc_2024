@@ -33,8 +33,9 @@ def part_2(disk_map: list[int]) -> int:
 
     for i, size in enumerate(disk_map):
         if i % 2:
-            free.append((len(memory), size))
-            memory.extend(repeat(None, size))
+            if size:
+                free.append((len(memory), size))
+                memory.extend(repeat(None, size))
         else:
             files.append(((len(memory), size), i // 2))
             memory.extend(repeat(i // 2, size))
