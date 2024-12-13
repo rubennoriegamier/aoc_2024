@@ -1,2 +1,2 @@
+numpy==2.2.*
 pytest==8.3.*
-z3-solver==4.13.3.*

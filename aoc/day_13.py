@@ -2,7 +2,7 @@ import fileinput
 from operator import methodcaller
 from typing import NamedTuple, Self
 
-import z3
+import numpy as np
 
 
 def main():
@@ -42,16 +42,12 @@ class Game(NamedTuple):
         return cls(Button.parse(raw_a), Button.parse(raw_b), Prize.parse(raw_prize))
 
     def play(self, prize_offset: int = 0) -> int | None:
-        a, b = z3.Ints('a b')
-        solver = z3.Solver()
+        a, b = map(round, np.linalg.solve(np.array([[self.a.x, self.b.x], [self.a.y, self.b.y]]),
+                                          np.array([self.prize.x + prize_offset, self.prize.y + prize_offset])))
 
-        solver.add(a * self.a.x + b * self.b.x == self.prize.x + prize_offset)
-        solver.add(a * self.a.y + b * self.b.y == self.prize.y + prize_offset)
-
-        if solver.check() == z3.sat:
-            model = solver.model()
-
-            return model[a].as_long() * 3 + model[b].as_long()
+        if a * self.a.x + b * self.b.x == self.prize.x + prize_offset and \
+                a * self.a.y + b * self.b.y == self.prize.y + prize_offset:
+            return int(a * 3 + b)
 
 
 def part_1(games: list[Game]) -> int:
