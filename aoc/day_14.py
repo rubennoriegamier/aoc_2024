@@ -1,5 +1,8 @@
 import fileinput
-from itertools import count
+from collections import defaultdict
+from functools import partial
+from itertools import count, pairwise, starmap
+from operator import eq, sub
 from typing import NamedTuple, Self
 
 
@@ -53,26 +56,19 @@ def part_1(robots: list[Robot], seconds: int, width: int, height: int) -> int:
 
 
 def part_2(robots: list[Robot], width: int, height: int) -> int:
-    grid = [[False] * width for _ in range(height)]
     positions = [list(robot.position) for robot in robots]
 
     for seconds in count():
+        xs = defaultdict(set)
+
         for robot, position in zip(robots, positions):
-            grid[position[1]][position[0]] = True
+            xs[position[1]].add(position[0])
             position[0] = (position[0] + robot.velocity.x) % width
             position[1] = (position[1] + robot.velocity.y) % height
 
-        for line in grid:
-            straight_line = 0
-
-            for x, is_robot in enumerate(line):
-                if is_robot:
-                    straight_line += 1
-                    if straight_line == 31:
-                        return seconds
-                    line[x] = False
-                else:
-                    straight_line = 0
+        for xs in xs.values():
+            if len(xs) >= 31 and sum(map(partial(eq, 1), starmap(sub, pairwise(sorted(xs, reverse=True))))) >= 30:
+                return seconds
 
 
 if __name__ == '__main__':
