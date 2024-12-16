@@ -51,35 +51,30 @@ def build_graph(grid: list[str]) -> tuple[nx.DiGraph, tuple[int, int, int], tupl
                 le = y, x, 3
 
                 if grid[y - 1][x] != '#':
+                    edges.append((up, (y - 1, x, 0), 1))
                     edges.append((ri, up, 1_000))
                     edges.append((le, up, 1_000))
                 if grid[y][x + 1] != '#':
+                    edges.append((ri, (y, x + 1, 1), 1))
                     edges.append((up, ri, 1_000))
                     edges.append((do, ri, 1_000))
                 if grid[y + 1][x] != '#':
+                    edges.append((do, (y + 1, x, 2), 1))
                     edges.append((ri, do, 1_000))
                     edges.append((le, do, 1_000))
                 if grid[y][x - 1] != '#':
-                    edges.append((do, le, 1_000))
-                    edges.append((up, le, 1_000))
-
-                if grid[y - 1][x] != '#':
-                    edges.append((up, (y - 1, x, 0), 1))
-                if grid[y][x + 1] != '#':
-                    edges.append((ri, (y, x + 1, 1), 1))
-                if grid[y + 1][x] != '#':
-                    edges.append((do, (y + 1, x, 2), 1))
-                if grid[y][x - 1] != '#':
                     edges.append((le, (y, x - 1, 3), 1))
+                    edges.append((up, le, 1_000))
+                    edges.append((do, le, 1_000))
 
                 if tile == 'S':
                     start = y, x, 1
                 elif tile == 'E':
                     end = y, x, 4
-                    edges.append((up, (y, x, 4), 0))
-                    edges.append((ri, (y, x, 4), 0))
-                    edges.append((do, (y, x, 4), 0))
-                    edges.append((le, (y, x, 4), 0))
+                    edges.append((up, end, 0))
+                    edges.append((ri, end, 0))
+                    edges.append((do, end, 0))
+                    edges.append((le, end, 0))
 
     graph = nx.DiGraph()
     graph.add_weighted_edges_from(edges)
