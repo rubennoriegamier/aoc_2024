@@ -57,7 +57,6 @@ def part_2(program: list[int]) -> int:
     stop = 8 ** len(program)
     ranges = [(range(start, stop, (stop - start) // 7), len(program) - 1)]
     a_min = float('inf')
-    aaa = 0
 
     while ranges:
         range_, i = ranges.pop()
@@ -66,7 +65,6 @@ def part_2(program: list[int]) -> int:
             program_ = part_1(a, program)
 
             if program_[i] == program[i]:
-                aaa += 1
                 if program_ == program:
                     a_min = min(a_min, a)
                 else:
