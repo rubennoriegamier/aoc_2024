@@ -1,7 +1,5 @@
 import fileinput
 from functools import cache
-from functools import partial
-from operator import lt
 
 
 def main():
@@ -26,7 +24,7 @@ def part_1_and_2(patterns: list[str], towels: list[str]) -> tuple[int, int]:
 
     arrangements = list(map(get_arrangements, towels))
 
-    return sum(map(partial(lt, 0), arrangements)), sum(arrangements)
+    return sum(map(bool, arrangements)), sum(arrangements)
 
 
 if __name__ == '__main__':
