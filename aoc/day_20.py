@@ -49,23 +49,13 @@ def part_1(grid: list[str], *, at_least: int) -> int:
 
 def part_2(grid: list[str], *, at_least: int, max_ps: int) -> int:
     grid = grid_with_path(grid)
-    cheats = 0
 
-    for y, line in enumerate(grid):
-        for x, tile in enumerate(line):
-            if tile != -1:
-                for y_ in range(max(y - max_ps, 0), min(y + max_ps + 1, len(grid))):
-                    y_dist = abs(y - y_)
-                    for x_ in range(max(x - max_ps + y_dist, 0), min(x + max_ps - y_dist + 1, len(grid[0]))):
-                        if (tile_ := grid[y_][x_]) != -1:
-                            x_dist = abs(x - x_)
-                            normal_dist = tile_ - tile
-                            shortc_dist = y_dist + x_dist
-
-                            if normal_dist - shortc_dist >= at_least:
-                                cheats += 1
-
-    return cheats
+    return sum(grid[y_][x_] != -1 and grid[y_][x_] - tile - abs(y - y_) - abs(x - x_) >= at_least
+               for y, line in enumerate(grid)
+               for x, tile in enumerate(line)
+               if tile != -1
+               for y_ in range(max(y - max_ps, 0), min(y + max_ps + 1, len(grid)))
+               for x_ in range(max(x - max_ps + abs(y - y_), 0), min(x + max_ps - abs(y - y_) + 1, len(grid[0]))))
 
 
 if __name__ == '__main__':
