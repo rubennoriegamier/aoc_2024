@@ -31,13 +31,15 @@ def part_2(secret_numbers: list[int]) -> int:
     for secret_number in secret_numbers:
         prices = [int(str(secret_number)[-1])
                   for secret_number in islice(next_secret_numbers(secret_number), 2_001)]
-        diffs = [next_price - curr_price for curr_price, next_price in pairwise(prices)]
-        prev_changes = set()
+        changes = [next_price - curr_price for curr_price, next_price in pairwise(prices)]
+        prev_ids = set()
 
-        for i, price in enumerate(islice(prices, 4, None), 4):
-            if (changes := tuple(diffs[i - 4:i])) not in prev_changes:
-                bananas[changes] += price
-                prev_changes.add(changes)
+        id_ = changes[0] + 9 << 5 | changes[1] + 9 << 10 | changes[2] + 9 << 15
+
+        for price, change in zip(islice(prices, 4, None), islice(changes, 3, None)):
+            if (id_ := id_ >> 5 | change + 9 << 15) not in prev_ids:
+                bananas[id_] += price
+                prev_ids.add(id_)
 
     return bananas.most_common(1)[0][1]
 
